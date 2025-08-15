@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PZEM Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #c9302c;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>PZEM Readings</h1>
+    
+    {% if data.error %}
+        <p class="error">{{ data.error }}</p>
+    {% else %}
+    <table>
+        <tr><td>Voltage:</td><td>{{ data.voltage }} V</td></tr>
+        <tr><td>Current:</td><td>{{ data.current }} A</td></tr>
+        <tr><td>Power:</td><td>{{ data.power }} W</td></tr>
+        <tr><td>Energy:</td><td>{{ data.energy }} kWh</td></tr>
+        <tr><td>Frequency:</td><td>{{ data.frequency }} Hz</td></tr>
+        <tr><td>Power Factor:</td><td>{{ data.power_factor }}</td></tr>
+    </table>
+    {% endif %}
+
+    <a href="{% url 'pzem_reset' %}" class="btn">Reset Energy Counter</a>
+</div>
+
+</body>
+</html>

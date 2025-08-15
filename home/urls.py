@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from .views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', pzem_data,name="pzem_data"),
+    path('pzem_reset/', pzem_reset,name="pzem_reset"),
+
 ]
