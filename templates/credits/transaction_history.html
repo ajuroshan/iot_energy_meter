@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Credit History - Energy Meter{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Credit History</h1>
+
+<div class="grid" style="margin-bottom: 1.5rem;">
+    <div class="card stat-box">
+        <div class="value">{{ current_balance|floatformat:3 }}</div>
+        <div class="label">Current Balance (kWh)</div>
+    </div>
+    <div class="card stat-box">
+        <div class="value" style="color: #27ae60;">+{{ total_credits|floatformat:3 }}</div>
+        <div class="label">Total Credits Added</div>
+    </div>
+    <div class="card stat-box">
+        <div class="value" style="color: #e74c3c;">-{{ total_debits|floatformat:3 }}</div>
+        <div class="label">Total Used</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Transaction History</h2>
+    
+    {% if transactions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance After</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                <td>{{ transaction.get_transaction_type_display }}</td>
+                <td style="color: {% if transaction.amount_kwh >= 0 %}#27ae60{% else %}#e74c3c{% endif %}; font-weight: bold;">
+                    {% if transaction.amount_kwh >= 0 %}+{% endif %}{{ transaction.amount_kwh|floatformat:3 }} kWh
+                </td>
+                <td>{{ transaction.balance_after|floatformat:3 }} kWh</td>
+                <td style="color: #7f8c8d;">{{ transaction.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; color: #7f8c8d; padding: 2rem;">
+        No transactions yet.
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,2 @@
+# Requirements for ESP32 simulator scripts
+paho-mqtt>=2.0.0

@@ -210,6 +210,8 @@ __marimo__/
 # django default .gitignore
 venv
 .env
+.env.local
+.env.production
 .idea
 *.pyc
 __pycache__
@@ -218,5 +220,26 @@ db.sqlite3
 **/migrations/0*
 
 **/*.log
-*.json
-*.sql
+
+# Static files (collected)
+/staticfiles/
+
+# Docker volumes (local)
+docker/mosquitto/passwd
+docker/nginx/ssl/
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfvars
+!terraform/*.tfvars.example
+terraform/.terraform.lock.hcl
+
+# ESP32/PlatformIO
+esp32_firmware/.pio/
+esp32_firmware/.vscode/
+
+# IDE
+.vscode/
+*.code-workspace

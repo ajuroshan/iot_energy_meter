@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}{{ station.name }} - Energy Meter{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <h1>{{ station.name }}</h1>
+            <span class="status-badge status-{{ station.status }}">
+                {{ station.get_status_display }}
+            </span>
+        </div>
+        
+        {% if station.location %}
+        <p style="color: #7f8c8d; margin-top: 0.5rem;">{{ station.location }}</p>
+        {% endif %}
+        
+        {% if station.description %}
+        <p style="margin-top: 1rem;">{{ station.description }}</p>
+        {% endif %}
+    </div>
+    
+    {% if station.status == 'online' %}
+    <div class="card">
+        <h2>Current Readings</h2>
+        <div class="reading-grid">
+            <div class="reading-item">
+                <div class="value">{{ station.current_voltage|floatformat:1 }}</div>
+                <div class="unit">Volts</div>
+            </div>
+            <div class="reading-item">
+                <div class="value">{{ station.current_amperage|floatformat:2 }}</div>
+                <div class="unit">Amps</div>
+            </div>
+            <div class="reading-item">
+                <div class="value">{{ station.current_power|floatformat:0 }}</div>
+                <div class="unit">Watts</div>
+            </div>
+            <div class="reading-item">
+                <div class="value">{{ station.current_energy|floatformat:3 }}</div>
+                <div class="unit">kWh (Total)</div>
+            </div>
+            <div class="reading-item">
+                <div class="value">{{ station.current_frequency|floatformat:1 }}</div>
+                <div class="unit">Hz</div>
+            </div>
+            <div class="reading-item">
+                <div class="value">{{ station.current_power_factor|floatformat:2 }}</div>
+                <div class="unit">Power Factor</div>
+            </div>
+        </div>
+        <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 0.5rem;">
+            Last updated: {{ station.last_seen|timesince }} ago
+        </p>
+    </div>
+    {% endif %}
+    
+    <div class="card">
+        {% if not user.is_authenticated %}
+        <div class="alert alert-info">
+            Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> or 
+            <a href="{% url 'accounts:register' %}">register</a> to start charging.
+        </div>
+        
+        {% elif active_session %}
+        <h2>Active Session</h2>
+        <p>You have an active charging session at this station.</p>
+        <p style="margin: 1rem 0;">
+            <strong>Started:</strong> {{ active_session.started_at|date:"M d, Y H:i" }}<br>
+            <strong>Duration:</strong> {{ active_session.duration_minutes }} minutes
+        </p>
+        <a href="{% url 'stations:session' active_session.id %}" class="btn btn-primary">
+            View Session
+        </a>
+        
+        {% elif station.is_occupied %}
+        <div class="alert alert-warning">
+            This station is currently in use by another user.
+        </div>
+        
+        {% elif station.status == 'offline' %}
+        <div class="alert alert-error">
+            This station is currently offline. Please try another station.
+        </div>
+        
+        {% elif user.profile.balance_kwh <= 0 %}
+        <div class="alert alert-warning">
+            <strong>Insufficient Balance!</strong><br>
+            Your balance is {{ user.profile.balance_kwh }} kWh. 
+            Please contact the administrator to add credits.
+        </div>
+        
+        {% else %}
+        <h2>Start Charging</h2>
+        <p style="margin-bottom: 1rem;">
+            Your current balance: <strong>{{ user.profile.balance_kwh|floatformat:3 }} kWh</strong>
+        </p>
+        
+        <form method="post" action="{% url 'stations:start' station.uuid %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                Start Charging
+            </button>
+        </form>
+        
+        <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 1rem;">
+            Charging will start immediately. Your balance will be deducted based on energy consumed.
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

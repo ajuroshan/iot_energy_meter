@@ -1,0 +1,84 @@
+services:
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: energy_meter
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mqtt_data:/mosquitto/data
+      - mqtt_log:/mosquitto/log
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-t", "$$SYS/#", "-C", "1", "-i", "healthcheck", "-W", "3"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings.development
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/energy_meter
+      - MQTT_BROKER=mqtt
+      - MQTT_PORT=1883
+      - SECRET_KEY=dev-secret-key-change-in-production
+    volumes:
+      - .:/app
+      - /app/.venv
+      - static_data:/app/staticfiles
+    command: >
+      sh -c "uv sync --frozen &&
+             uv run python manage.py migrate &&
+             uv run python manage.py runserver 0.0.0.0:8000"
+
+  mqtt_listener:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    depends_on:
+      db:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings.development
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/energy_meter
+      - MQTT_BROKER=mqtt
+      - MQTT_PORT=1883
+      - SECRET_KEY=dev-secret-key-change-in-production
+    volumes:
+      - .:/app
+      - /app/.venv
+    command: >
+      sh -c "uv sync --frozen &&
+             uv run python manage.py mqtt_listener"
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  mqtt_data:
+  mqtt_log:
+  static_data:

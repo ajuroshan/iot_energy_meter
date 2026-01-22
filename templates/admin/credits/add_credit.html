@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Add Credits to User</h1>
+
+<form method="post" id="add-credit-form">
+    {% csrf_token %}
+    
+    <fieldset class="module aligned">
+        <h2>Select User</h2>
+        <div class="form-row">
+            <label for="user_id">User:</label>
+            <select name="user_id" id="user_id" required>
+                <option value="">---------</option>
+                {% for user in users %}
+                <option value="{{ user.id }}">
+                    {{ user.username }} ({{ user.email }}) - Balance: {{ user.profile.balance_kwh }} kWh
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </fieldset>
+
+    <fieldset class="module aligned">
+        <h2>Credit Details</h2>
+        <div class="form-row">
+            <label for="id_amount_kwh">Amount (kWh):</label>
+            {{ form.amount_kwh }}
+            {% if form.amount_kwh.errors %}
+            <ul class="errorlist">
+                {% for error in form.amount_kwh.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        <div class="form-row">
+            <label for="id_description">Description:</label>
+            {{ form.description }}
+        </div>
+    </fieldset>
+
+    <div class="submit-row">
+        <input type="submit" value="Add Credits" class="default">
+        <a href="{% url 'admin:credits_credittransaction_changelist' %}" class="closelink">Cancel</a>
+    </div>
+</form>
+{% endblock %}

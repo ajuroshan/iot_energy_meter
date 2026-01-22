@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Energy Meter{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px;">
+    <h1 style="margin-bottom: 1.5rem;">Your Profile</h1>
+    
+    <div class="card">
+        <h2>Account Information</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" value="{{ user.username }}" disabled>
+                <small style="color: #7f8c8d;">Username cannot be changed</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" value="{{ user.email }}" disabled>
+                <small style="color: #7f8c8d;">Contact admin to change email</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" name="phone" id="phone" value="{{ profile.phone }}">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+    
+    <div class="card" style="margin-top: 1rem;">
+        <h2>Account Stats</h2>
+        <table>
+            <tr>
+                <td>Current Balance</td>
+                <td><strong>{{ profile.balance_kwh|floatformat:3 }} kWh</strong></td>
+            </tr>
+            <tr>
+                <td>Member Since</td>
+                <td>{{ profile.created_at|date:"M d, Y" }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %}

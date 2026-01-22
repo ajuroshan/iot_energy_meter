@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Energy Meter{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Welcome, {{ user.first_name|default:user.username }}!</h1>
+
+<div class="grid">
+    <div class="card stat-box">
+        <div class="value">{{ profile.balance_kwh|floatformat:3 }}</div>
+        <div class="label">Available Balance (kWh)</div>
+    </div>
+    
+    {% if active_session %}
+    <div class="card stat-box" style="border: 2px solid #f39c12;">
+        <div class="value" style="color: #f39c12;">Active</div>
+        <div class="label">Charging at {{ active_session.station.name }}</div>
+        <a href="{% url 'stations:session' active_session.id %}" class="btn btn-primary" style="margin-top: 1rem;">
+            View Session
+        </a>
+    </div>
+    {% else %}
+    <div class="card stat-box">
+        <div class="value" style="color: #27ae60;">Ready</div>
+        <div class="label">No Active Session</div>
+        <a href="{% url 'stations:list' %}" class="btn btn-success" style="margin-top: 1rem;">
+            Find a Station
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% if profile.balance_kwh <= 0 %}
+<div class="alert alert-warning">
+    <strong>Low Balance!</strong> Please contact the administrator to add credits to your account.
+</div>
+{% endif %}
+
+<div class="card" style="margin-top: 1rem;">
+    <h2>Recent Sessions</h2>
+    
+    {% if recent_sessions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Station</th>
+                <th>Date</th>
+                <th>Duration</th>
+                <th>Energy Used</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in recent_sessions %}
+            <tr>
+                <td>{{ session.station.name }}</td>
+                <td>{{ session.started_at|date:"M d, Y H:i" }}</td>
+                <td>{{ session.duration_minutes }} min</td>
+                <td>{{ session.energy_consumed_kwh|floatformat:3|default:"-" }} kWh</td>
+                <td>
+                    <span class="status-badge status-{{ session.status }}">
+                        {{ session.get_status_display }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'stations:history' %}" style="display: block; margin-top: 1rem;">View all sessions →</a>
+    {% else %}
+    <p style="color: #7f8c8d;">No charging sessions yet. Start your first session at any available station!</p>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-top: 1rem;">
+    <h2>Quick Actions</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'stations:list' %}" class="btn btn-primary">Find Stations</a>
+        <a href="{% url 'credits:history' %}" class="btn btn-secondary">View Credits</a>
+        <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">Edit Profile</a>
+    </div>
+</div>
+{% endblock %}

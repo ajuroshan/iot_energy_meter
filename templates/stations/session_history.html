@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Session History - Energy Meter{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Charging History</h1>
+
+<div class="card">
+    {% if sessions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Station</th>
+                <th>Duration</th>
+                <th>Energy Used</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+            <tr>
+                <td>{{ session.started_at|date:"M d, Y H:i" }}</td>
+                <td>{{ session.station.name }}</td>
+                <td>{{ session.duration_minutes }} min</td>
+                <td>{{ session.energy_consumed_kwh|floatformat:3|default:"-" }} kWh</td>
+                <td>
+                    <span class="status-badge status-{{ session.status }}">
+                        {{ session.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'stations:session' session.id %}">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; color: #7f8c8d; padding: 2rem;">
+        No charging sessions yet. Start your first session at any available station!
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

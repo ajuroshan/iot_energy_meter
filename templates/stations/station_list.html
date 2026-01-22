@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Stations - Energy Meter{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Charging Stations</h1>
+
+<div class="grid">
+    {% for station in stations %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <h2>{{ station.name }}</h2>
+            <span class="status-badge status-{{ station.status }}">
+                {{ station.get_status_display }}
+            </span>
+        </div>
+        
+        {% if station.location %}
+        <p style="color: #7f8c8d; margin-bottom: 1rem;">{{ station.location }}</p>
+        {% endif %}
+        
+        <div style="margin: 1rem 0;">
+            {% if station.is_occupied %}
+            <span class="status-badge status-active">In Use</span>
+            {% else %}
+            <span class="status-badge status-online">Available</span>
+            {% endif %}
+        </div>
+        
+        {% if station.status == 'online' %}
+        <div class="reading-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="reading-item">
+                <div class="value">{{ station.current_voltage|floatformat:1 }}</div>
+                <div class="unit">Volts</div>
+            </div>
+            <div class="reading-item">
+                <div class="value">{{ station.current_power|floatformat:0 }}</div>
+                <div class="unit">Watts</div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div style="margin-top: 1rem;">
+            <a href="{% url 'stations:detail' station.uuid %}" class="btn btn-primary">
+                View Station
+            </a>
+            <a href="{% url 'stations:qr_code' station.uuid %}" class="btn btn-secondary" target="_blank">
+                QR Code
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="card">
+        <p style="text-align: center; color: #7f8c8d;">
+            No charging stations available at the moment.
+        </p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
