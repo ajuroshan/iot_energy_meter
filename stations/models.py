@@ -54,6 +54,27 @@ class ChargingStation(models.Model):
         """Get the URL that the QR code should point to."""
         return f"/station/{self.uuid}/"
 
+    @property
+    def is_online(self):
+        """Check if station is online based on last_seen timestamp."""
+        if not self.last_seen:
+            return False
+        # Consider station offline if no heartbeat in last 60 seconds
+        timeout = timezone.now() - timezone.timedelta(seconds=60)
+        return self.last_seen >= timeout
+
+    @property
+    def online_status(self):
+        """Get the display status based on real-time online check."""
+        if self.is_online:
+            return self.StationStatus.ONLINE
+        return self.StationStatus.OFFLINE
+
+    @property
+    def online_status_display(self):
+        """Get human-readable online status."""
+        return "Online" if self.is_online else "Offline"
+
     def update_telemetry(self, data: dict):
         """Update station telemetry data from MQTT message."""
         self.current_voltage = Decimal(str(data.get("voltage", 0)))

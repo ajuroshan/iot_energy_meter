@@ -10,8 +10,8 @@
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: start;">
             <h2>{{ station.name }}</h2>
-            <span class="status-badge status-{{ station.status }}">
-                {{ station.get_status_display }}
+            <span class="status-badge status-{% if station.is_online %}online{% else %}offline{% endif %}">
+                {{ station.online_status_display }}
             </span>
         </div>
         
@@ -27,7 +27,7 @@
             {% endif %}
         </div>
         
-        {% if station.status == 'online' %}
+        {% if station.is_online %}
         <div class="reading-grid" style="grid-template-columns: repeat(2, 1fr);">
             <div class="reading-item">
                 <div class="value">{{ station.current_voltage|floatformat:1 }}</div>

@@ -7,8 +7,8 @@
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: start;">
             <h1>{{ station.name }}</h1>
-            <span class="status-badge status-{{ station.status }}">
-                {{ station.get_status_display }}
+            <span class="status-badge status-{% if station.is_online %}online{% else %}offline{% endif %}">
+                {{ station.online_status_display }}
             </span>
         </div>
         
@@ -21,7 +21,7 @@
         {% endif %}
     </div>
     
-    {% if station.status == 'online' %}
+    {% if station.is_online %}
     <div class="card">
         <h2>Current Readings</h2>
         <div class="reading-grid">
@@ -79,7 +79,7 @@
             This station is currently in use by another user.
         </div>
         
-        {% elif station.status == 'offline' %}
+        {% elif not station.is_online %}
         <div class="alert alert-error">
             This station is currently offline. Please try another station.
         </div>
