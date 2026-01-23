@@ -4,13 +4,13 @@ resource "aws_security_group" "app" {
   description = "Security group for IoT Energy Meter application"
   vpc_id      = aws_vpc.main.id
 
-  # SSH access (restricted to admin IP)
+  # SSH access
   ingress {
     description = "SSH"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.admin_ip]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # HTTP

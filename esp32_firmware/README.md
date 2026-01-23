@@ -61,7 +61,7 @@ Open `esp32_firmware.ino` and edit **only these 2 things** at the top of the fil
 
 // ┌───────────────────────────────────────────────────────────────────────────┐
 // │ STEP 1: Enter your WiFi credentials                                       │
-// └───────────────────────────────────────────────────────────────────────────┘
+// └──────────────────────────────────────────────'─────────────────────────────┘
 #define WIFI_SSID       "MyHomeWiFi"          // <-- Your WiFi network name
 #define WIFI_PASSWORD   "MyWiFiPassword123"   // <-- Your WiFi password
 
