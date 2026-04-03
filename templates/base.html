@@ -270,7 +270,7 @@
             {% if user.is_staff %}
             <a href="{% url 'admin:index' %}">Admin</a>
             {% endif %}
-            <a href="{% url 'accounts:logout' %}">Logout</a>
+            <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">{% csrf_token %}<button type="submit" style="background:none;border:none;cursor:pointer;padding:0;color:inherit;font:inherit;">Logout</button></form>
             {% else %}
             <a href="{% url 'accounts:login' %}">Login</a>
             <a href="{% url 'accounts:register' %}">Register</a>
