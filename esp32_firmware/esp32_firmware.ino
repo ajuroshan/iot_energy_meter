@@ -1,6 +1,6 @@
 /*
  * IoT Energy Meter - ESP32 Firmware
- * Production Ready - AWS Server: 15.207.150.87
+ * Production Ready - AWS Server: 13.206.55.71
  * 
  * This firmware reads energy data from PZEM-004T sensor and sends it to
  * Django backend via MQTT. It also receives commands to control a relay
@@ -74,7 +74,7 @@
 #endif
 
 // MQTT Broker - AWS Production Server
-#define MQTT_BROKER     "15.207.150.87"
+#define MQTT_BROKER     "13.206.55.71"
 #define MQTT_PORT       1883
 #define MQTT_USERNAME   ""                     // Leave empty (no auth)
 #define MQTT_PASSWORD   ""                     // Leave empty (no auth)
