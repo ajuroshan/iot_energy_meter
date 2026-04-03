@@ -8,22 +8,25 @@ Production-ready firmware for ESP32 + PZEM-004T energy meter.
 
 | Service | URL / Address |
 |---------|---------------|
-| **Web Dashboard** | http://15.207.150.87 |
-| **Admin Panel** | http://15.207.150.87/admin |
-| **MQTT Broker** | `15.207.150.87:1883` |
+| **Web Dashboard** | http://13.206.55.71 |
+| **Admin Panel** | http://13.206.55.71/admin |
+| **MQTT Broker** | `13.206.55.71:1883` |
+
+
+## Real server
 
 ### Credentials
 
 | Service | Username | Password |
 |---------|----------|----------|
-| Admin Panel | `admin` | `admin123` |
+| Admin Panel | `admin` | `adminadmin` |
 
 ### Station UUIDs (Pre-configured in firmware)
 
 | Device | Station | UUID | Station URL |
 |--------|---------|------|-------------|
-| `DEVICE_1` | Station 1 | `a079734a-0e2d-4589-9da8-82ce079c6519` | http://15.207.150.87/station/a079734a-0e2d-4589-9da8-82ce079c6519/ |
-| `DEVICE_2` | Station 2 | `bce9c8e1-bce0-406c-a182-6285c7f1a5a1` | http://15.207.150.87/station/bce9c8e1-bce0-406c-a182-6285c7f1a5a1/ |
+| `DEVICE_1` | Station 1 | `a079734a-0e2d-4589-9da8-82ce079c6519` | http://13.206.55.71/station/a079734a-0e2d-4589-9da8-82ce079c6519/ |
+| `DEVICE_2` | Station 2 | `bce9c8e1-bce0-406c-a182-6285c7f1a5a1` | http://13.206.55.71/station/bce9c8e1-bce0-406c-a182-6285c7f1a5a1/ |
 
 ---
 
@@ -109,7 +112,7 @@ WiFi connected!
 IP Address: 192.168.1.105
 Signal Strength (RSSI): -45 dBm
 
-Connecting to MQTT broker: 15.207.150.87:1883
+Connecting to MQTT broker: 13.206.55.71:1883
 MQTT connected!
 Subscribed to: charging/stations/a079734a-0e2d-4589-9da8-82ce079c6519/commands
 
@@ -126,13 +129,13 @@ Published: OK
 
 ### 2. Check Production Dashboard
 
-1. Open http://15.207.150.87/station/
+1. Open http://13.206.55.71/station/
 2. Your station should show **Online** with a green badge
 3. Click on the station to see live readings (voltage, current, power)
 
 ### 3. Test Complete Charging Flow
 
-1. **Login to Admin**: http://15.207.150.87/admin
+1. **Login to Admin**: http://13.206.55.71/admin
    - Username: `admin`
    - Password: `admin123`
 
@@ -142,7 +145,7 @@ Published: OK
    - Save
 
 3. **Start Charging**:
-   - Go to http://15.207.150.87/station/a079734a-0e2d-4589-9da8-82ce079c6519/
+   - Go to http://13.206.55.71/station/a079734a-0e2d-4589-9da8-82ce079c6519/
    - Click **Start Charging**
    - Watch Serial Monitor for:
      ```
@@ -260,9 +263,9 @@ The built-in LED (GPIO2) shows the device status:
 | Issue | Solution |
 |-------|----------|
 | No internet | Ensure ESP32 can reach the internet |
-| Server down | Check if http://15.207.150.87 is accessible |
+| Server down | Check if http://13.206.55.71 is accessible |
 | Firewall | Ensure port 1883 is not blocked |
-| Test connectivity | `ping 15.207.150.87` from your network |
+| Test connectivity | `ping 13.206.55.71` from your network |
 
 ### PZEM Shows NaN / No Reading
 
@@ -325,16 +328,16 @@ You can manually send commands to test the ESP32:
 
 ```bash
 # Monitor all messages from Station 1
-mosquitto_sub -h 15.207.150.87 -p 1883 \
+mosquitto_sub -h 13.206.55.71 -p 1883 \
   -t "charging/stations/a079734a-0e2d-4589-9da8-82ce079c6519/#" -v
 
 # Send START command
-mosquitto_pub -h 15.207.150.87 -p 1883 \
+mosquitto_pub -h 13.206.55.71 -p 1883 \
   -t "charging/stations/a079734a-0e2d-4589-9da8-82ce079c6519/commands" \
   -m '{"action":"start"}'
 
 # Send STOP command
-mosquitto_pub -h 15.207.150.87 -p 1883 \
+mosquitto_pub -h 13.206.55.71 -p 1883 \
   -t "charging/stations/a079734a-0e2d-4589-9da8-82ce079c6519/commands" \
   -m '{"action":"stop"}'
 ```
@@ -371,4 +374,4 @@ To flash the second ESP32 for Station 2:
 Station 2 will automatically use:
 - UUID: `bce9c8e1-bce0-406c-a182-6285c7f1a5a1`
 - Client ID: `esp32-station-2`
-- Dashboard: http://15.207.150.87/station/bce9c8e1-bce0-406c-a182-6285c7f1a5a1/
+- Dashboard: http://13.206.55.71/station/bce9c8e1-bce0-406c-a182-6285c7f1a5a1/
