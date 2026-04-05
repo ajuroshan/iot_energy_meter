@@ -6,7 +6,7 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "13.206.55.71"]
 
 # Database - SQLite for simple local dev, PostgreSQL via docker-compose
 import dj_database_url
@@ -20,6 +20,7 @@ DATABASES = {
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "http://13.206.55.71",
 ]
 
 # Email backend for development
