@@ -150,9 +150,26 @@ class MQTTClient:
             self._handlers[topic_pattern] = []
         self._handlers[topic_pattern].append(handler)
 
+    def _ensure_connected(self):
+        """Ensure the client is connected, reconnecting if necessary."""
+        if not self._connected:
+            try:
+                self.client.connect(self.broker, self.port, keepalive=60)
+                self.client.loop_start()
+                # Give it a moment to establish connection
+                import time
+                time.sleep(0.5)
+            except Exception as e:
+                logger.error(f"Failed to reconnect to MQTT broker: {e}")
+                return False
+        return True
+
     def publish(self, topic: str, payload: dict, qos: int = 1):
         """Publish a message to a topic."""
         try:
+            if not self._ensure_connected():
+                logger.error(f"Cannot publish to {topic}: not connected")
+                return False
             message = json.dumps(payload)
             result = self.client.publish(topic, message, qos=qos)
             if result.rc == mqtt.MQTT_ERR_SUCCESS:
