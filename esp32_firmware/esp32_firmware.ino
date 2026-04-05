@@ -371,14 +371,6 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
 void handleStartCommand() {
   Serial.println("Processing START command...");
-  
-  // Check if voltage is present (safety check)
-  float voltage = pzem.voltage();
-  if (isnan(voltage) || voltage < 100) {
-    Serial.println("ERROR: No voltage detected, cannot start charging");
-    return;
-  }
-  
   enableRelay();
   publishStatus();
   Serial.println("Charging STARTED");

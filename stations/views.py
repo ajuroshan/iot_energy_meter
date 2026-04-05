@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
+from mqtt_service.client import mqtt_client
+
 from .models import ChargingSession, ChargingStation
 from .services import ChargingError, ChargingService
 
@@ -44,9 +46,7 @@ def start_charging(request, station_uuid):
     try:
         session = ChargingService.start_session(request.user, station)
         messages.success(request, f"Charging session started at {station.name}!")
-
-        # TODO: Send MQTT command to ESP32 to enable relay
-
+        mqtt_client.start_charging(str(station.uuid))
         return redirect("stations:session", session_id=session.id)
     except ChargingError as e:
         messages.error(request, str(e))
@@ -71,9 +71,7 @@ def stop_charging(request, session_id):
             request,
             f"Charging session ended. You consumed {session.energy_consumed_kwh:.3f} kWh.",
         )
-
-        # TODO: Send MQTT command to ESP32 to disable relay
-
+        mqtt_client.stop_charging(str(session.station.uuid))
         return redirect("accounts:dashboard")
     except ChargingError as e:
         messages.error(request, str(e))
